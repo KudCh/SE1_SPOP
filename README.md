@@ -1,1 +1,1 @@
-# SE1_SPOP
+# Software Engineering 1: Small Proprietary Oriented Project
