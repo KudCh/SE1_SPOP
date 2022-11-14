@@ -1,1 +1,2 @@
-# Software Engineering 1: Small Proprietary Oriented Project
+# Software Engineering 1
+## Small Proprietary Oriented Project
