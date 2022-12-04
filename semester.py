@@ -12,8 +12,24 @@
 
 """
 
+# does a Semester instance depend on a student or vice versa?
+# a pointer to the current day - in Semester or in Student
 class Semester():
 
-    def __init__(self, length, excercises):
+    def __init__(self, length, calendar):
         self.length = length
-        self.exercises = excercises
+        self.calendar = calendar # calendar is a linked list of days 
+
+class Exercise():
+
+    def __init__(self, question, solution, level):
+        self.question = question
+        self.solution = solution
+        self.level = level
+
+class Day():
+
+    def __init__(self, id, exercise):
+        self.id = id
+        self.exercise = exercise
+        self.next = None # last day in the calendar
