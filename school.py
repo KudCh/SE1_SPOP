@@ -15,14 +15,31 @@
 
 from semester import Semester
 
-
 class School:
     """user_goal
        reuse: setNumberOfExercises(), addExercise()
     """
-    def __init__(self, name):
+    def __init__(self, name, id):
       self.name = name
+      self.id = id
 
+    """The fucntion expects two strings that correspond to an exercise task and a solution."""
+    def addExcercise(self):
+
+        print("~~~You are adding a new exercise~~~")
+        task = input("Please enter the task:")
+        solution = input("Please enter the solution:")
+        print("\n")
+        ex = (task, solution)
+
+        return ex
+
+
+class Administrator():
+    
+    def __init__(self, id):
+        self.id = id
+        
     """The function populates a semester of length n
        with n exercises based on the input of the school actor.
     """
@@ -51,14 +68,3 @@ class School:
         n = int(input("Enter the number of exercises for this semester: "))
 
         return n
-
-    """The fucntion expects two strings that correspond to an exercise task and a solution."""
-    def addExcercise(self):
-
-        print("~~~You are adding a new exercise~~~")
-        task = input("Please enter the task:")
-        solution = input("Please enter the solution:")
-        print("\n")
-        ex = (task, solution)
-
-        return ex
