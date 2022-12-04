@@ -19,10 +19,16 @@ class Student:
     exercises = []
     score = None
 
-    def __init__(self, name, Semester):
-        self.name = name
-        self.exercises = {ex:0 for ex in Semester.exercises}
+# we have to reinitialize a student when a new semester starts
+# Student != Semester
 
+# Progress: contains a pointer to the current day in a semester and a list of ex+student solutions
+    def __init__(self, name, id):
+        self.name = name
+        self.id = id
+
+# Possibly useless
+    """
     def study(self):
 
         print(self.name, "is solving exercises")
@@ -31,7 +37,8 @@ class Student:
             self.openExercise(exercise)
             studentSolution = self.enterSolution()
 
-            self.exercises[exercise] = studentSolution
+            self.exercises[exercise] = studentSolution # wrong. we can evaluate automatically and store the score
+    """
 
     # prints exercise task
     def openExercise(self, exercise):
@@ -40,7 +47,5 @@ class Student:
 
 
     def enterSolution(self):
-
         solution = input("Please enter your solution:")
-
         return solution
