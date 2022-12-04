@@ -26,6 +26,8 @@ class Student:
     def __init__(self, name, id):
         self.name = name
         self.id = id
+       # self.exercises = None 
+        self.progress = [] # semester, semester day, completed exercises with a score 
 
 # Possibly useless
     """
@@ -44,7 +46,6 @@ class Student:
     def openExercise(self, exercise):
         print(exercise[0], " ?")
         return exercise[0]
-
 
     def enterSolution(self):
         solution = input("Please enter your solution:")
