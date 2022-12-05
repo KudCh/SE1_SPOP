@@ -23,24 +23,23 @@ class Student:
 # Student != Semester
 
 # Progress: contains a pointer to the current day in a semester and a list of ex+student solutions
-    def __init__(self, name, id):
+    def __init__(self, name, id=None):
         self.name = name
-        self.id = id
-       # self.exercises = None 
-        self.progress = [] # semester, semester day, completed exercises with a score 
+       # self.id = id
+        self.exercises = None 
+       # self.progress = [] # semester, semester day, completed exercises with a score 
 
 # Possibly useless
-    """
-    def study(self):
+
+    def study(self, exercise):
 
         print(self.name, "is solving exercises")
 
-        for exercise in self.exercises.keys():
-            self.openExercise(exercise)
-            studentSolution = self.enterSolution()
+        self.openExercise(exercise)
+        studentSolution = self.enterSolution()
 
-            self.exercises[exercise] = studentSolution # wrong. we can evaluate automatically and store the score
-    """
+        self.exercises[exercise] = studentSolution # wrong. we can evaluate automatically and store the score
+
 
     # prints exercise task
     def openExercise(self, exercise):

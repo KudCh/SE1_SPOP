@@ -1,22 +1,25 @@
+from semester import Semester, Day, Exercise
+from random import choice
+# semester has a state - > calendar that shows what day it is
+# program has a timer that counts days in the calendar 
+
 class Administrator():
     
     def __init__(self, id):
         self.id = id
         
-    """The function populates a semester of length n
-       with n exercises based on the input of the school actor.
-    """
-    def setStudyPlan(self):
+    def setStudyPlan(self, exerciseDatabase): #database 
 
-        print(self.name.upper(), "sets the study plan this semester.\n")
+        print("You are setting a study plan for this semester.\n")
         semesterLength = self.setNumberOfExercises()
-        exercises = []
+        exercises = [choice(exerciseDatabase) for i in range(semesterLength)]
+        calendar = (None, [])
 
-        i = semesterLength
-        while(i):
-            print(i, "exercises need(s) to be added\n")
-            exercises.append(self.addExcercise())
-            i -= 1
+        """
+        for i in range(1, semesterLength):
+        # add a node to the linked list
+            i+=1
+        """
 
         print("Semester with ", semesterLength, " exercises initialized!\n")
 

@@ -14,45 +14,36 @@
 
 """
 
-#Workflow
-# - implement a login function 
-# - handle exceptions
-# - add registartion 
-# - behaviours for student 
-# - behaviour for school
-
+from administrator import Administrator
 from school import School
+from semester import Exercise
 from student import Student
 
-database = {"students":{"Kristina":"pass123"}, 
-            "schools": {"Awesome School":"pass234"}}
-            
+userDatabase = {"students":{"Kristina":"pass123"}, 
+                "schools":{"Awesome School":"pass234"}, 
+                "admins":{"admin":"admin123"}}
+
+defaultExercise = Exercise("Who is the Liskov substitution principle named after?", "Barbara Liskov")
+exerciseDatabase = [defaultExercise]
+
 def login(database):
     
     username = input("Please enter your username:")
     password = input("Please enter password:")
 
-    role = None # role should be ENUM type
+    role = None 
 
-# restructure into one for loop
-    if username in database["students"].keys():
-        role = "student"
-        if database["students"][username] == password:
-            print("Welcome to your ",role," account. \n", "You are loggen in as ", username)
-        else: 
-            print("Wrong Password")
+    for role in ["student", "school", "admin"]:
 
-    elif username in database["schools"].keys():
-        role = "school"
-        if database["school"][username] == password:
-            print("Welcome to your ",role," account. \n", "You are loggen in as ", username)
-        else:
-            print("Wrong Password")
+        if username in database[role+"s"].keys():
+            if database[role+"s"][username] == password:
+                print("Welcome to your ",role," account. \n", "You are loggen in as ", username)
+            else: 
+                print("Wrong Password")
+            return role, username
 
-    else:
-        print("No account with such username")
-
-    return role, username
+    print("No account with such username")
+    return      
 
 
 """ The function initializes a school instance,
@@ -60,61 +51,43 @@ def login(database):
     evaluates the student.
 """
 
-# how do we initialize the program??? Who initializes the first semester? 
-# (length, exercises)
 def runAndDeploy():
 
 
-    role, account = None, None
-    while role == None or account == None:
-        role, account = login(database)
+    role, username = None, None
+    while role == None or username == None:
+        role, username = login(userDatabase)
 
-    #current_semester = Semester(exercises)
+    current_semester = None
 
-    """
-    if role =="school":
+    if role =="admin":
 
-        student = database["schoold"][account]
-
-        calendar = current_semester.calendar()
-        day = calendar.getCurrentDay()
-
-        if day == 0:
-            print("Let us initialize a new semester!")
-            semester = school.setStudyPlan()
-
-        print("Hello, this is the ", day, "th day of the semester.")
-        #print("What would you like to do?")
-
-
-    #s = School("Michel Lucius")
-    #firstSemester = s.setStudyPlan()
+        admin = Administrator(username)
+        print("Initialize a new semester")
+        current_semester = admin.setStudyPlan(exerciseDatabase)
 
     if role == "student":
        
-        student = database["students"][account]
+        student = Student(username)
+        try:
+            student.exercises = current_semester.exercises
+        except: 
+            print("No semester in progress")
 
-        calendar = current_semester.calendar()
-        day = calendar.getCurrentDay()
+        student.study(current_semester.exercises[current_semester.current]) # redo the implementation
 
-        print("Hi, this is the ", day, "th day of your semester")
-        print("Exercise of the day: ", day.exercise)
-
-        student.study() 
-
-
-    #student = Student("Jack", firstSemester)
-    #student.study()
+    if role == "school":
+        school = School(username)
+        school.addExcercise()
 
     evaluateStudent(student)
-    """
     return
 
-""" The function takes an inctance of class Student as a parameter
+""" The function takes an instance of class Student as a parameter
     and returns the student's score based on their solutions to the exercises."""
 def evaluateStudent(student):
 
-    studentRecord = student.exercises
+    studentRecord = student.progress
 
     for exercise in studentRecord.keys():
         studentAnswer = studentRecord[exercise]
