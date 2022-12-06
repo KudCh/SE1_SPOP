@@ -16,7 +16,7 @@
 
 from administrator import Administrator
 from school import School
-from semester import Exercise
+from semester import Exercise, Semester
 from student import Student
 
 userDatabase = {"students":{"Kristina":"pass123"}, 
@@ -43,8 +43,12 @@ def login(database):
             return role, username
 
     print("No account with such username")
-    return      
+    return role, username    
 
+def logout(role, usename):
+    print("You are logged out.")
+    role, username = None, None 
+    return role, username
 
 """ The function initializes a school instance,
     initializes the semester instance and a student instance,
@@ -59,28 +63,41 @@ def runAndDeploy():
         role, username = login(userDatabase)
 
     current_semester = None
+    
+    while role != "admin":
+        role, username = logout(role, username)
+        print("Please log in as ", "admin")
+        while role == None or username == None:
+           role, username = login(userDatabase)
 
-    if role =="admin":
-
-        admin = Administrator(username)
-        print("Initialize a new semester")
-        current_semester = admin.setStudyPlan(exerciseDatabase)
-
-    if role == "student":
+    admin = Administrator(username)
+    print("Please, initialize a new semester.")
+    current_semester = admin.setStudyPlan(exerciseDatabase)
+    
+    while role != "student":
+        role, username = logout(role, username)
+        print("Please log in as ", "student")
+        while role == None or username == None:
+           role, username = login(userDatabase)
        
-        student = Student(username)
-        try:
-            student.exercises = current_semester.exercises
-        except: 
-            print("No semester in progress")
+    student = Student(username)
+    try:
+        student.exercises = current_semester.exercises
+    except: 
+        print("No semester in progress")
 
-        student.study(current_semester.exercises[current_semester.current]) # redo the implementation
-
-    if role == "school":
-        school = School(username)
-        school.addExcercise()
-
+    student.study(current_semester.exercises[current_semester.current]) # redo the implementation
     evaluateStudent(student)
+
+    while role != "school":
+        role, username = logout(role, username)
+        print("Please log in as ", "school")
+        while role == None or username == None:
+           role, username = login(userDatabase)
+
+    school = School(username)
+    school.addExcercise()
+
     return
 
 """ The function takes an instance of class Student as a parameter
@@ -92,7 +109,7 @@ def evaluateStudent(student):
     for exercise in studentRecord.keys():
         studentAnswer = studentRecord[exercise]
         if isinstance(studentAnswer, str):
-            if exercise[1] == studentAnswer:
+            if exercise.solution == studentAnswer:
                 studentRecord[exercise] = 1
             else:
                 studentRecord[exercise] = 0

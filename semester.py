@@ -21,7 +21,7 @@ class Semester():
         self.current = 1
 
 class Exercise():
-    def __init__(self, question, solution, schoolId="test"):
+    def __init__(self, question, solution, schoolId="test"): # add exercise ID
         self.question = question
         self.solution = solution
         self.level = schoolId

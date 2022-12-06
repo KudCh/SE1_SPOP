@@ -16,8 +16,6 @@
 from school import School
 
 class Student:
-    exercises = []
-    score = None
 
 # we have to reinitialize a student when a new semester starts
 # Student != Semester
@@ -26,7 +24,7 @@ class Student:
     def __init__(self, name, id=None):
         self.name = name
        # self.id = id
-        self.exercises = None 
+        self.exercises = {None:None} 
        # self.progress = [] # semester, semester day, completed exercises with a score 
 
 # Possibly useless
@@ -37,14 +35,14 @@ class Student:
 
         self.openExercise(exercise)
         studentSolution = self.enterSolution()
-
-        self.exercises[exercise] = studentSolution # wrong. we can evaluate automatically and store the score
+        # self.exercises is a list but should be a dict
+        self.exercises[exercise] = studentSolution # We could evaluate automatically and store the score
 
 
     # prints exercise task
     def openExercise(self, exercise):
-        print(exercise[0], " ?")
-        return exercise[0]
+        print(exercise.question, " ?")
+        return exercise.question
 
     def enterSolution(self):
         solution = input("Please enter your solution:")

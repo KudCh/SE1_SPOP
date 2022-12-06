@@ -12,7 +12,9 @@ class Administrator():
 
         print("You are setting a study plan for this semester.\n")
         semesterLength = self.setNumberOfExercises()
-        exercises = [choice(exerciseDatabase) for i in range(semesterLength)]
+        exercises = [None]
+        for i in range(semesterLength):
+            exercises.append(choice(exerciseDatabase))
         calendar = (None, [])
 
         """
