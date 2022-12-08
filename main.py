@@ -86,8 +86,8 @@ def runAndDeploy():
     except: 
         print("No semester in progress")
 
-    student.study(current_semester.exercises[current_semester.current]) # redo the implementation
-    evaluateStudent(student)
+    school.study(current_semester.exercises[current_semester.current]) # redo the implementation
+   # admin.evaluateStudent(student)
 
     while role != "school":
         role, username = logout(role, username)
@@ -96,29 +96,12 @@ def runAndDeploy():
            role, username = login(userDatabase)
 
     school = School(username)
-    school.addExcercise()
+    school.addExcercise(exerciseDatabase)
 
     return
 
 """ The function takes an instance of class Student as a parameter
     and returns the student's score based on their solutions to the exercises."""
-def evaluateStudent(student):
-
-    studentRecord = student.progress
-
-    for exercise in studentRecord.keys():
-        studentAnswer = studentRecord[exercise]
-        if isinstance(studentAnswer, str):
-            if exercise.solution == studentAnswer:
-                studentRecord[exercise] = 1
-            else:
-                studentRecord[exercise] = 0
-
-    student.score = sum(studentRecord.values())
-
-    print(student.name, "'s score is ", student.score)
-
-    return
 
 # execution of the program
 runAndDeploy()

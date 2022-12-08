@@ -36,3 +36,4 @@ class Administrator():
         n = int(input("Enter the number of exercises for this semester: "))
 
         return n
+

@@ -24,7 +24,7 @@ class Exercise():
     def __init__(self, question, solution, schoolId="test"): # add exercise ID
         self.question = question
         self.solution = solution
-        self.level = schoolId
+        self.schoolId = schoolId
 
 
 class Day(): # node 

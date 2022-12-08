@@ -24,7 +24,7 @@ class School:
     #  self.id = id
 
     """The fucntion expects two strings that correspond to an exercise task and a solution."""
-    def addExcercise(self):
+    def addExcercise(self, exerciseDatabase):
 
         print("~~~You are adding a new exercise~~~")
         task = input("Please enter the task:")
@@ -33,3 +33,21 @@ class School:
         exercise = Exercise(task, solution, self.id)
 
         return exercise
+
+    def evaluateStudent(student):
+
+        studentRecord = student.progress
+
+        for exercise in studentRecord.keys():
+            studentAnswer = studentRecord[exercise]
+            if isinstance(studentAnswer, str):
+                if exercise.solution == studentAnswer:
+                    studentRecord[exercise] = 1
+                else:
+                    studentRecord[exercise] = 0
+
+        student.score = sum(studentRecord.values())
+
+        print(student.name, "'s score is ", student.score)
+
+        return
