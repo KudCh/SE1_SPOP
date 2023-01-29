@@ -14,17 +14,18 @@
 """
 
 from school import School
+from authenticated import Authenticated
 
-class Student:
+class Student(Authenticated):
 
 # we have to reinitialize a student when a new semester starts
 # Student != Semester
 
 # Progress: contains a pointer to the current day in a semester and a list of ex+student solutions
-    def __init__(self, name, id=None):
-        self.name = name
-       # self.id = id
-        self.exercises = {None:None} 
+    def __init__(self, password, name, id, ):
+        super.__init__(name, password)
+        self.id = id
+       # self.exercises = {None:None} 
        # self.progress = [] # semester, semester day, completed exercises with a score 
 
 # Possibly useless

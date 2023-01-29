@@ -14,6 +14,11 @@
 
 """
 
+# tasks 
+# implement eoExplore - student can view score, student has a score variable associated with them 
+
+
+
 from administrator import Administrator
 from school import School
 from semester import Exercise, Semester

@@ -14,13 +14,16 @@
 """
 
 from semester import Semester, Exercise
+from authenticated import Authenticated
 
-class School:
+class School(Authenticated):
     """user_goal
        reuse: setNumberOfExercises(), addExercise()
     """
-    def __init__(self, name, id=None):
-      self.name = name
+    def __init__(self, name, password id):
+        super.__init__(name, password)
+        self.id = id
+    #  self.name = name
     #  self.id = id
 
     """The fucntion expects two strings that correspond to an exercise task and a solution."""
