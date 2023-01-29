@@ -20,7 +20,7 @@ class School(Authenticated):
     """user_goal
        reuse: setNumberOfExercises(), addExercise()
     """
-    def __init__(self, name, password id):
+    def __init__(self, name, password, id):
         super.__init__(name, password)
         self.id = id
     #  self.name = name
