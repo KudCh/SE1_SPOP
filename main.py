@@ -19,41 +19,19 @@
 
 
 
-from administrator import Administrator
 from school import School
 from semester import Exercise, Semester
 from student import Student
+from interface import * 
 
-userDatabase = {"students":{"Kristina":"pass123"}, 
-                "schools":{"Awesome School":"pass234"}, 
-                "admins":{"admin":"admin123"}}
+accounts = {}
 
-defaultExercise = Exercise("Who is the Liskov substitution principle named after?", "Barbara Liskov")
-exerciseDatabase = [defaultExercise]
+accounts[1] = Student(password="pass123", name="Kristina", id = 1)
+accounts[2] = School(password="pass234", name="Awesome School", id =2)
 
-def login(database):
-    
-    username = input("Please enter your username:")
-    password = input("Please enter password:")
+print(accounts)
+#a database of IDs, each id points to username-password pair 
 
-    role = None 
-
-    for role in ["student", "school", "admin"]:
-
-        if username in database[role+"s"].keys():
-            if database[role+"s"][username] == password:
-                print("Welcome to your ",role," account. \n", "You are loggen in as ", username)
-            else: 
-                print("Wrong Password")
-            return role, username
-
-    print("No account with such username")
-    return role, username    
-
-def logout(role, usename):
-    print("You are logged out.")
-    role, username = None, None 
-    return role, username
 
 """ The function initializes a school instance,
     initializes the semester instance and a student instance,
@@ -62,47 +40,19 @@ def logout(role, usename):
 
 def runAndDeploy():
 
+    state = State()
+    interface = userInterface(state, accounts)
+    interface.login()
+    actor = accounts[interface.state.loggedInID]
+    while(True):
+        menu = interface.menu(state.mode)
+        choice = interface.getUsrChoice()
+        move = interface.moveTo(choice, actor, actionlist=menu)
 
-    role, username = None, None
-    while role == None or username == None:
-        role, username = login(userDatabase)
+        if interface.state.action == "Log Out":
+            break
 
-    current_semester = None
-    
-    while role != "admin":
-        role, username = logout(role, username)
-        print("Please log in as ", "admin")
-        while role == None or username == None:
-           role, username = login(userDatabase)
-
-    admin = Administrator(username)
-    print("Please, initialize a new semester.")
-    current_semester = admin.setStudyPlan(exerciseDatabase)
-    
-    while role != "student":
-        role, username = logout(role, username)
-        print("Please log in as ", "student")
-        while role == None or username == None:
-           role, username = login(userDatabase)
-       
-    student = Student(username)
-    try:
-        student.exercises = current_semester.exercises
-    except: 
-        print("No semester in progress")
-
-    school.study(current_semester.exercises[current_semester.current]) # redo the implementation
-   # admin.evaluateStudent(student)
-
-    while role != "school":
-        role, username = logout(role, username)
-        print("Please log in as ", "school")
-        while role == None or username == None:
-           role, username = login(userDatabase)
-
-    school = School(username)
-    school.addExcercise(exerciseDatabase)
-
+    print("Your session ended.")
     return
 
 """ The function takes an instance of class Student as a parameter

@@ -1,7 +1,5 @@
 from semester import Semester, Day, Exercise
 from random import choice
-# semester has a state - > calendar that shows what day it is
-# program has a timer that counts days in the calendar 
 
 class Administrator():
     

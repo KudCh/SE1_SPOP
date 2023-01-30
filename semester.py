@@ -15,25 +15,31 @@
 # does a Semester instance depend on a student or vice versa?
 # a pointer to the current day - in Semester or in Student
 class Semester():
-    def __init__(self, length, exercises):
-        self.length = length
-        self.exercises = exercises # calendar is a tuple: a linked list of days, a pointer 
-        self.current = 1
+    def __init__(self):
+        self.length = 0
+        self.exercises = {} 
+        self.id = None
+
+# exercises = {1:Exercise}
+    def print(self):
+        for index, exercise in exercises.items():
+            print(index, "   ", exercise.id, "\n") #exercise ID is exercise name
+
 
 class Exercise():
-    def __init__(self, question, solution, schoolId="test"): # add exercise ID
-        self.question = question
+    def __init__(self, task, solution, Id): 
+        self.task = task
         self.solution = solution
-        self.schoolId = schoolId
+        self.id = Id
+
+    def print(self):
+        print(self.id) # is id the name or just ID ? or a tuple of (int,str)
+        print(self.task)
+        print(self.solution)
 
 
-class Day(): # node 
-    def __init__(self, id, exercise):
-        self.id = id
-        self.exercise = exercise
-        self.next = None # last day in the calendar
-
-class Calendar(): # linked list of Days
-    def __init__(self, head = None):
-        self.head = head
-        self.count = 0
+class Answer:
+    
+    def __init__(self, answer, exerciseID):
+        self.studentAnswer = answer
+        self.exerciseID = exerciseID

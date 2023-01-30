@@ -15,36 +15,50 @@
 
 from school import School
 from authenticated import Authenticated
+from semester import Answer
 
 class Student(Authenticated):
 
 # we have to reinitialize a student when a new semester starts
 # Student != Semester
 
+    #a list of student answers to exercises
+    record = []
 # Progress: contains a pointer to the current day in a semester and a list of ex+student solutions
     def __init__(self, password, name, id, ):
-        super.__init__(name, password)
+        super().__init__(name, password)
         self.id = id
        # self.exercises = {None:None} 
        # self.progress = [] # semester, semester day, completed exercises with a score 
 
-# Possibly useless
+    # prints exercise task if exerciseID points to an existing exercise
+    def openExercise(self, exerciseID, semester):
+        exercise = None
+        for exID in semester.exercises.keys():
+            if exID == exerciseID:
+                exercise = semester.exercises[exID]
 
-    def study(self, exercise):
+        if exercise:         
+            print(exercise.question)
 
-        print(self.name, "is solving exercises")
+        return 
 
-        self.openExercise(exercise)
-        studentSolution = self.enterSolution()
-        # self.exercises is a list but should be a dict
-        self.exercises[exercise] = studentSolution # We could evaluate automatically and store the score
+    def enterAnswer(self, exerciseID, semesterID):
+        answer = input("Please enter your solution:")
 
+        #pre-condition that the exercise exists
+        #answerObj = Answer(answer, exerciseID)
+        self.record[exerciseID]=answer
 
-    # prints exercise task
-    def openExercise(self, exercise):
-        print(exercise.question, " ?")
-        return exercise.question
+        return 
 
-    def enterSolution(self):
-        solution = input("Please enter your solution:")
-        return solution
+    def printSemester(self, semester):
+
+        for index, exercise in semester.exercises.items():
+            status = "to do"
+            score = "unknown"
+            if exercise.id in self.record.keys():
+                status = "done"
+                if self.record[exercise.id] == exercise.solution: # assert 1-word replies?
+                    score = "correct"
+            print(index, "   ", exercise.task,"   ", status, "   ", score, "\n")

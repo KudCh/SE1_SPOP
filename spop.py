@@ -14,41 +14,24 @@
 
 """
 
-from administrator import Administrator
+# tasks 
+# implement eoExplore - student can view score, student has a score variable associated with them 
+
+
+
 from school import School
 from semester import Exercise, Semester
 from student import Student
+from interface import * 
 
-userDatabase = {"students":{"Kristina":"pass123"}, 
-                "schools":{"Awesome School":"pass234"}, 
-                "admins":{"admin":"admin123"}}
+accounts = {}
 
-defaultExercise = Exercise("Who is the Liskov substitution principle named after?", "Barbara Liskov")
-exerciseDatabase = [defaultExercise]
+accounts[1] = Student(password="pass123", name="Kristina", id = 1)
+accounts[2] = School(password="pass234", name="Awesome School", id =2)
 
-def login(database):
-    
-    username = input("Please enter your username:")
-    password = input("Please enter password:")
+print(accounts)
+#a database of IDs, each id points to username-password pair 
 
-    role = None 
-
-    for role in ["student", "school", "admin"]:
-
-        if username in database[role+"s"].keys():
-            if database[role+"s"][username] == password:
-                print("Welcome to your ",role," account. \n", "You are loggen in as ", username)
-            else: 
-                print("Wrong Password")
-            return role, username
-
-    print("No account with such username")
-    return role, username    
-
-def logout(role, usename):
-    print("You are logged out.")
-    role, username = None, None 
-    return role, username
 
 """ The function initializes a school instance,
     initializes the semester instance and a student instance,
@@ -57,197 +40,26 @@ def logout(role, usename):
 
 def runAndDeploy():
 
+    state = State()
+    interface = userInterface(state, accounts)
+    interface.login()
+    actor = accounts[interface.state.loggedInID]
+    while(True):
+        menu = interface.menu(state.mode)
+        choice = interface.getUsrChoice()
+        move = interface.moveTo(choice, actor, actionlist=menu)
 
-    role, username = None, None
-    while role == None or username == None:
-        role, username = login(userDatabase)
+        if interface.state.action == "Log Out":
+            break
 
-    current_semester = None
-    
-    while role != "admin":
-        role, username = logout(role, username)
-        print("Please log in as ", "admin")
-        while role == None or username == None:
-           role, username = login(userDatabase)
-
-    admin = Administrator(username)
-    print("Please, initialize a new semester.")
-    current_semester = admin.setStudyPlan(exerciseDatabase)
-    
-    while role != "student":
-        role, username = logout(role, username)
-        print("Please log in as ", "student")
-        while role == None or username == None:
-           role, username = login(userDatabase)
-       
-    student = Student(username)
-    try:
-        student.exercises = current_semester.exercises
-    except: 
-        print("No semester in progress")
-
-    student.study(current_semester.exercises[current_semester.current]) # redo the implementation
-    evaluateStudent(student)
-
-    while role != "school":
-        role, username = logout(role, username)
-        print("Please log in as ", "school")
-        while role == None or username == None:
-           role, username = login(userDatabase)
-
-    school = School(username)
-    school.addExcercise()
-
+    print("Your session ended.")
     return
 
 """ The function takes an instance of class Student as a parameter
     and returns the student's score based on their solutions to the exercises."""
-def evaluateStudent(student):
-
-    studentRecord = student.progress
-
-    for exercise in studentRecord.keys():
-        studentAnswer = studentRecord[exercise]
-        if isinstance(studentAnswer, str):
-            if exercise.solution == studentAnswer:
-                studentRecord[exercise] = 1
-            else:
-                studentRecord[exercise] = 0
-
-    student.score = sum(studentRecord.values())
-
-    print(student.name, "'s score is ", student.score)
-
-    return
 
 # execution of the program
 runAndDeploy()
-
-from semester import Semester, Day, Exercise
-from random import choice
-# semester has a state - > calendar that shows what day it is
-# program has a timer that counts days in the calendar 
-
-class Administrator():
-    
-    def __init__(self, id):
-        self.id = id
-        
-    def setStudyPlan(self, exerciseDatabase): #database 
-
-        print("You are setting a study plan for this semester.\n")
-        semesterLength = self.setNumberOfExercises()
-        exercises = [None]
-        for i in range(semesterLength):
-            exercises.append(choice(exerciseDatabase))
-        calendar = (None, [])
-
-        """
-        for i in range(1, semesterLength):
-        # add a node to the linked list
-            i+=1
-        """
-
-        print("Semester with ", semesterLength, " exercises initialized!\n")
-
-        semester = Semester(semesterLength, exercises)
-
-        return semester
-
-
-    """The function expects an integer input and returns this integer."""
-    def setNumberOfExercises(self):
-
-        n = int(input("Enter the number of exercises for this semester: "))
-
-        return n
-
-"""
-    15/11/22
-    Kristina Kudryavtseva, kristina.kudryavtseva.001@student.uni.lu
-    SPOP main file
-
-    The program is an exercise platform for students.
-    The program accomodates two types of users: schools, students.
-    Schools set the study plan for each semester.
-    Students solve the exercises, are evaluated and ranked based on their solutions.
-
-    This file contains the School class and corresponding functions,
-    which requires user input from the school actor.
-
-"""
-
-from semester import Semester, Exercise
-
-class School:
-    """user_goal
-       reuse: setNumberOfExercises(), addExercise()
-    """
-    def __init__(self, name, id=None):
-      self.name = name
-    #  self.id = id
-
-    """The fucntion expects two strings that correspond to an exercise task and a solution."""
-    def addExcercise(self):
-
-        print("~~~You are adding a new exercise~~~")
-        task = input("Please enter the task:")
-        solution = input("Please enter the solution:")
-        print("\n")
-        exercise = Exercise(task, solution, self.id)
-
-        return exercise
-
-"""
-    15/11/22
-    Kristina Kudryavtseva, kristina.kudryavtseva.001@student.uni.lu
-    SPOP main file
-
-    The program is an exercise platform for students.
-    The program accomodates two types of users: schools, students.
-    Schools set the study plan for each semester.
-    Students solve the exercises, are evaluated and ranked based on their solutions.
-
-    This file contains the Student class and corresponding functions,
-    which expect user input from the student actor.
-
-"""
-
-from school import School
-
-class Student:
-
-# we have to reinitialize a student when a new semester starts
-# Student != Semester
-
-# Progress: contains a pointer to the current day in a semester and a list of ex+student solutions
-    def __init__(self, name, id=None):
-        self.name = name
-       # self.id = id
-        self.exercises = {None:None} 
-       # self.progress = [] # semester, semester day, completed exercises with a score 
-
-# Possibly useless
-
-    def study(self, exercise):
-
-        print(self.name, "is solving exercises")
-
-        self.openExercise(exercise)
-        studentSolution = self.enterSolution()
-        # self.exercises is a list but should be a dict
-        self.exercises[exercise] = studentSolution # We could evaluate automatically and store the score
-
-
-    # prints exercise task
-    def openExercise(self, exercise):
-        print(exercise.question, " ?")
-        return exercise.question
-
-    def enterSolution(self):
-        solution = input("Please enter your solution:")
-        return solution
-
 """
     15/11/22
     Kristina Kudryavtseva, kristina.kudryavtseva.001@student.uni.lu
@@ -265,25 +77,298 @@ class Student:
 # does a Semester instance depend on a student or vice versa?
 # a pointer to the current day - in Semester or in Student
 class Semester():
-    def __init__(self, length, exercises):
-        self.length = length
-        self.exercises = exercises # calendar is a tuple: a linked list of days, a pointer 
-        self.current = 1
+    def __init__(self):
+        self.length = 0
+        self.exercises = {} 
+        self.id = None
+
+# exercises = {1:Exercise}
+    def print(self):
+        for index, exercise in exercises.items():
+            print(index, "   ", exercise.id, "\n") #exercise ID is exercise name
+
 
 class Exercise():
-    def __init__(self, question, solution, schoolId="test"): # add exercise ID
-        self.question = question
+    def __init__(self, task, solution, Id): 
+        self.task = task
         self.solution = solution
-        self.level = schoolId
+        self.id = Id
+
+    def print(self):
+        print(self.id) # is id the name or just ID ? or a tuple of (int,str)
+        print(self.task)
+        print(self.solution)
 
 
-class Day(): # node 
-    def __init__(self, id, exercise):
+class Answer:
+    
+    def __init__(self, answer, exerciseID):
+        self.studentAnswer = answer
+        self.exerciseID = exerciseID
+
+"""
+    15/11/22
+    Kristina Kudryavtseva, kristina.kudryavtseva.001@student.uni.lu
+    SPOP main file
+
+    The program is an exercise platform for students.
+    The program accomodates two types of users: schools, students.
+    Schools set the study plan for each semester.
+    Students solve the exercises, are evaluated and ranked based on their solutions.
+
+    This file contains the School class and corresponding functions,
+    which requires user input from the school actor.
+
+"""
+
+from semester import Semester, Exercise
+from authenticated import Authenticated
+
+#task = input("Please enter the task:")
+#solution = input("Please enter the solution:")
+
+#semesterId = 1
+
+#semesters = []
+#current_semester = Semester() 
+
+class School(Authenticated):
+    """user_goal
+       reuse: setNumberOfExercises(), addExercise()
+    """
+    def __init__(self, name, password, id):
+        super().__init__(name, password)
         self.id = id
-        self.exercise = exercise
-        self.next = None # last day in the calendar
+    #  self.name = name
+    #  self.id = id
 
-class Calendar(): # linked list of Days
-    def __init__(self, head = None):
-        self.head = head
-        self.count = 0
+    def initNewSemester(self):
+        semester = Semester()
+        numberOfEx = self.setNumberOfExercises()
+        semester.length = numberOfEx
+        semester.id = input("Please enter the semester ID: ")
+
+        for i in range(semester.length):
+            self.addExercise(semester)
+
+        return semester
+
+    def setNumberOfExercises(self):
+
+        num = int(input("Enter how many exercises you'd like to add: "))
+        if isinstance(num, int)and num>0:
+            return num
+        else:
+            return 0
+
+    """The fucntion expects two strings that correspond to an exercise task and a solution."""
+    def addExercise(self, semester, id=0):
+
+        task = input("Please enter exercise task: ")
+        solution = input("Please enter exercise solution: ")
+
+        exercise = Exercise(task, solution, id)
+        semester.exercises[len(semester.exercises)] = exercise
+
+        return exercise
+
+    def deleteExercise(self, exerciseID, semester):
+        semester.exercises.pop(exerciseID)
+        return 
+
+    def printSemester(self, semester):
+
+        for index, exercise in semester.exercises.items():
+            print(index, "   ", exercise.task, "\n") #exercise ID is exercise name
+        return
+
+    def giveFeedbackToStudent(student):
+        return
+
+from school import School
+from student import Student
+
+class State:
+
+    def __init__(self):
+        self.loggedInID = 0
+        self.mode = None
+        self.semester = None
+        self.exerciseID = 0
+        self.action = None
+        
+class userInterface:
+
+    def __init__(self, state, accounts):
+        self.state = state
+        self.accounts = accounts #account dictionary
+        return
+
+    def login(self):
+
+        username = input("Username: ")
+        password = input("Password: ")
+        credentials = (username, password)
+        loggedInID = None
+        role = None
+
+        for ID in self.accounts.keys():
+            if self.accounts[ID].username == username and self.accounts[ID].password == password:
+                loggedInID = ID
+                if isinstance(self.accounts[ID], Student):
+                    role = "Student"
+                else:
+                    role = "School"
+                print("Welcome to your ",role," account.")
+                print("You are loggen in as ", username)
+            else: 
+                print("An account with such credentials does not exist")        
+
+        self.state.loggedInID = loggedInID
+        self.state.mode = role    
+
+        return 
+
+    def logout(self):
+        print("You are logged out.")
+        #role, loggedInID = None, None 
+        self.state.mode = None
+        self.state.loggedInID = 0
+        return 
+
+
+    def menu(self, mode): #not only print
+        actionlist = {}
+        if mode == "School":
+            if self.state.semester == None: 
+                print("No semester is currently in progress")
+                actionlist = {1:"Initialize new semester", 2:"Log Out"}
+
+            else: 
+                print("Semester {} is currently in progress".format(self.state.semester.id))  
+                actionlist = {1:"Add an Exercise", 2:"Delete an Exercise", 3:"Log Out"}
+        
+        elif mode == "Student":
+            if self.state.semester == None: 
+                print("No semester is currently in progress")
+                actionlist = {1:"Log Out"}
+
+            else: 
+                print("Semester {} is currently in progress".format(self.state.semester.id))  
+                actionlist = {1:"Study", 2:"Log Out"}
+
+        else:
+            actionlist = {1:"Log In"}
+
+        for k, v in actionlist.items():
+            print("{:<8} {:<15}".format(k, v))
+
+        return actionlist
+    
+    def getUsrChoice(self) -> int:
+        choice = int(input("Choose an option: "))
+        return choice
+
+    def moveTo(self, choice, actor, actionlist):
+
+        action = actionlist[choice]
+        self.state.action = action
+
+        if action == "Initialize new semester":
+            self.state.semester = actor.initNewSemester()
+
+        elif action == "Add an Exercise":
+            actor.addExercise(self.state.semester)
+
+        elif action == "Delete an Exercise":
+            actor.printSemester(self.state.semester)
+            exerciseId = self.getUsrChoice()
+            actor.deleteExercise(exerciseId, self.state.semester)
+            print("You just deleted an exercise with id {}".format(exerciseId))
+
+        elif action == "Study":
+            actor.printSemester()
+            exerciseID = self.getUsrChoice()
+
+            if exerciseID not in actor.record.keys():
+                actor.openExercise(exerciseID)
+                actor.enterAnswer(exerciseID, self.state.semester)
+            else:
+                exercise = self.state.semester.exercises[exerciseID]
+                exercise.print()
+        else: 
+            self.logout()
+
+        return #change modes
+"""
+    15/11/22
+    Kristina Kudryavtseva, kristina.kudryavtseva.001@student.uni.lu
+    SPOP main file
+
+    The program is an exercise platform for students.
+    The program accomodates two types of users: schools, students.
+    Schools set the study plan for each semester.
+    Students solve the exercises, are evaluated and ranked based on their solutions.
+
+    This file contains the Student class and corresponding functions,
+    which expect user input from the student actor.
+
+"""
+
+from school import School
+from authenticated import Authenticated
+from semester import Answer
+
+class Student(Authenticated):
+
+# we have to reinitialize a student when a new semester starts
+# Student != Semester
+
+    #a list of student answers to exercises
+    record = []
+# Progress: contains a pointer to the current day in a semester and a list of ex+student solutions
+    def __init__(self, password, name, id, ):
+        super().__init__(name, password)
+        self.id = id
+       # self.exercises = {None:None} 
+       # self.progress = [] # semester, semester day, completed exercises with a score 
+
+    # prints exercise task if exerciseID points to an existing exercise
+    def openExercise(self, exerciseID, semester):
+        exercise = None
+        for exID in semester.exercises.keys():
+            if exID == exerciseID:
+                exercise = semester.exercises[exID]
+
+        if exercise:         
+            print(exercise.question)
+
+        return 
+
+    def enterAnswer(self, exerciseID, semesterID):
+        answer = input("Please enter your solution:")
+
+        #pre-condition that the exercise exists
+        #answerObj = Answer(answer, exerciseID)
+        self.record[exerciseID]=answer
+
+        return 
+
+    def printSemester(self, semester):
+
+        for index, exercise in semester.exercises.items():
+            status = "to do"
+            score = "unknown"
+            if exercise.id in self.record.keys():
+                status = "done"
+                if self.record[exercise.id] == exercise.solution: # assert 1-word replies?
+                    score = "correct"
+            print(index, "   ", exercise.task,"   ", status, "   ", score, "\n")
+
+class Authenticated:
+
+    def __init__(self, username, password):
+        self.password = password
+        self.username = username
+        self.loggedIn = False
+        
